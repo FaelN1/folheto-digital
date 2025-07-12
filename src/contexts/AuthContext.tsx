@@ -111,13 +111,17 @@ const login = async (email: string, password: string) => {
     }
   };
 
-  const logout = () => {
-    authService.removeAuthToken();
-    removeCookie('accessToken');
-    setUser(null);
-    router.push('/auth/login');
-    toast.info('Logout realizado com sucesso!');
-  };
+const logout = () => {
+  authService.removeAuthToken();
+  removeCookie('accessToken');
+  // Força a limpeza completa
+  if (typeof window !== 'undefined') {
+    localStorage.clear(); // ou apenas removeItem('accessToken')
+  }
+  setUser(null);
+  router.push('/auth/login');
+  toast.info('Logout realizado com sucesso!');
+};
 
   return (
     <AuthContext.Provider

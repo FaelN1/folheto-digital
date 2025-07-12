@@ -4,9 +4,12 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('accessToken')?.value;
   const { pathname } = request.nextUrl;
 
+   if (pathname === '/') {
+    return NextResponse.redirect(new URL('/auth/login', request.url));
+  }
   // Rotas que precisam de autenticação
   const protectedRoutes = ['/dashboard', '/intern'];
-
+  
   // Rotas de autenticação (login, register)
   const authRoutes = ['/auth/login', '/auth/register'];
 
@@ -25,6 +28,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+
     '/dashboard/:path*',
     '/intern/:path*',
     '/auth/login',

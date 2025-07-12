@@ -15,6 +15,7 @@ import {
   Share2,
   FileText,
   Settings,
+  Search,
   Megaphone,
 } from "lucide-react"
 
@@ -37,7 +38,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/intern/dashboard",
       icon: LayoutDashboard,
       isActive: true,
     },
@@ -163,6 +164,11 @@ const data = {
       title: "Configurações",
       url: "#",
       icon: Settings,
+    },
+        {
+      title: "Search",
+      url: "#",
+      icon: Search,
     },
   ],
 }

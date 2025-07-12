@@ -42,7 +42,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export function ChartAreaLegend() {
+export function ChartAreaLegendReport() {
   return (
     <Card>
       <CardHeader>

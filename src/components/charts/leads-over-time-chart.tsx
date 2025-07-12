@@ -1,54 +1,83 @@
 "use client"
 
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
+import { TrendingUp } from "lucide-react"
+import { Bar, BarChart, XAxis, YAxis } from "recharts"
 
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
+
+export const description = "A horizontal bar chart"
 
 const chartData = [
-  { date: "Jan", leads: 120 },
-  { date: "Fev", leads: 150 },
-  { date: "Mar", leads: 130 },
-  { date: "Abr", leads: 180 },
-  { date: "Mai", leads: 200 },
-  { date: "Jun", leads: 190 },
-  { date: "Jul", leads: 220 },
+  { month: "January", desktop: 186 },
+  { month: "February", desktop: 305 },
+  { month: "March", desktop: 237 },
+  { month: "April", desktop: 73 },
+  { month: "May", desktop: 209 },
+  { month: "June", desktop: 214 },
 ]
 
 const chartConfig = {
-  leads: {
-    label: "Leads Criados",
-    color: "hsl(var(--chart-1))",
+  desktop: {
+    label: "Desktop",
+    color: "var(--chart-1)",
   },
-  date: {
-    label: "Mês",
-  },
-} as const
+} satisfies ChartConfig
 
-export function LeadsOverTimeChart() {
+export function ChartBarHorizontal() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Leads Criados por Mês</CardTitle>
+        <CardTitle>Bar Chart - Horizontal</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-          <LineChart
+        <ChartContainer config={chartConfig}>
+          <BarChart
             accessibilityLayer
             data={chartData}
+            layout="vertical"
             margin={{
-              left: 12,
-              right: 12,
+              left: -20,
             }}
           >
-            <CartesianGrid vertical={false} />
-            <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
-            <YAxis dataKey="leads" tickLine={false} axisLine={false} tickMargin={8} />
-            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-            <Line dataKey="leads" type="monotone" stroke="hsl(var(--chart-1))" strokeWidth={2} dot={false} />
-          </LineChart>
+            <XAxis type="number" dataKey="desktop" hide />
+            <YAxis
+              dataKey="month"
+              type="category"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+              tickFormatter={(value) => value.slice(0, 3)}
+            />
+            <ChartTooltip
+              cursor={false}
+              content={<ChartTooltipContent hideLabel />}
+            />
+            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={5} />
+          </BarChart>
         </ChartContainer>
       </CardContent>
+      <CardFooter className="flex-col items-start gap-2 text-sm">
+        <div className="flex gap-2 leading-none font-medium">
+          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+        </div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
+        </div>
+      </CardFooter>
     </Card>
   )
 }

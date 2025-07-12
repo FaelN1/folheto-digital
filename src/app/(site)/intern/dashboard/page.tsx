@@ -1,27 +1,44 @@
+"use client";
+import React from "react"
 import { Users, Wifi, Tag, TrendingUp, TrendingDown } from "lucide-react"
 
 import { MetricCard } from "@/components/Metrics/section-cards"
 import { DashboardHeader } from "@/components/dashboard-header"
-import { LeadsByCompanyChart } from "@/components/charts/leads-by-company-chart"
-import { LeadsByTagChart } from "@/components/charts/leads-by-tag-chart"
-import { LeadsByEmulatorChart } from "@/components/charts/leads-by-emulator-chart"
-import { EmulatorStatusChart } from "@/components/charts/emulator-status-chart"
-import { TagProportionChart } from "@/components/charts/tag-proportion-chart"
-import { LeadsOverTimeChart } from "@/components/charts/leads-over-time-chart"
-import { LeadUpdatesChart } from "@/components/charts/lead-updates-chart"
-import { LeadsTable } from "@/components/tables/leads-table"
-import { EmulatorsTable } from "@/components/tables/emulators-table"
-import { TagsTable } from "@/components/tables/tags-table"
+import { ChartBarDefault } from "@/components/charts/leads-by-company-chart"
+import { ChartRadialStacked } from "@/components/charts/leads-by-tag-chart"
+import { ChartAreaLegend } from "@/components/charts/leads-by-emulator-chart"
+
 
 export default function DashboardPage() {
+    const companies = ["Company A", "Company B", "Company C"]
+  const tags = ["Tag 1", "Tag 2", "Tag 3"]
+  const emulators = ["Emulator 1", "Emulator 2", "Emulator 3"]
+
+  const [companyFilter, setCompanyFilter] = React.useState<string | undefined>(undefined)
+  const [tagFilter, setTagFilter] = React.useState<string | undefined>(undefined)
+  const [emulatorFilter, setEmulatorFilter] = React.useState<string | undefined>(undefined)
+  const [date, setDate] = React.useState<{ from?: Date; to?: Date } | undefined>(undefined)
+
   return (
     <div className="min-h-screen bg-background">
       <div className="w-full">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-w-full">
           {/* Header fixo e responsivo */}
-          <div className="w-full">
-            <DashboardHeader />
-          </div>
+           <div>
+      <DashboardHeader
+        companies={companies}
+        tags={tags}
+        emulators={emulators}
+        companyFilter={companyFilter}
+        tagFilter={tagFilter}
+        emulatorFilter={emulatorFilter}
+        setCompanyFilter={setCompanyFilter}
+        setTagFilter={setTagFilter}
+        setEmulatorFilter={setEmulatorFilter}
+        date={date}
+        setDate={setDate}
+      />
+    </div>
 
           {/* Cards de Métricas responsivos */}
           <div className="w-full">
@@ -89,33 +106,30 @@ export default function DashboardPage() {
           <div className="w-full">
             <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
               <div className="w-full">
-                <LeadsByCompanyChart />
+                <ChartBarDefault />
               </div>
               <div className="w-full">
-                <LeadsByTagChart />
+                <ChartRadialStacked />
               </div>
               <div className="w-full">
-                <LeadsByEmulatorChart />
+                <ChartAreaLegend />
               </div>
-              <div className="w-full">
-                <EmulatorStatusChart />
+              {/* <div className="w-full">
+                <ChartPieLabel />
               </div>
               <div className="w-full">
                 <TagProportionChart />
               </div>
               <div className="w-full md:col-span-2 lg:col-span-1 xl:col-span-1">
                 <LeadUpdatesChart />
-              </div>
+              </div> */}
             </div>
           </div>
 
-          {/* Gráfico de leads ao longo do tempo - largura completa */}
-          <div className="w-full">
-            <LeadsOverTimeChart />
-          </div>
+    
 
           {/* Tabelas Complementares */}
-          <div className="w-full">
+          {/* <div className="w-full">
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
               <div className="w-full lg:col-span-2 xl:col-span-1">
                 <LeadsTable />
@@ -127,7 +141,7 @@ export default function DashboardPage() {
                 <TagsTable />
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

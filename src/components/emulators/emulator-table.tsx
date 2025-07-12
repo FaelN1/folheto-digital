@@ -13,6 +13,7 @@ import { MoreHorizontal, Eye, Pencil, Power } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { EmulatorStatus } from "@/hooks/emulators/useEmulators"
 
 interface Emulator {
   id: string
@@ -28,7 +29,7 @@ interface EmulatorTableProps {
   emulators: Emulator[]
   onViewDetails: (id: string) => void
   onEdit: (id: string) => void
-  onToggleStatus: (id: string, currentStatus: "CONNECTED" | "DISCONNECTED") => void
+   onToggleStatus: (id: string, currentStatus: EmulatorStatus) => void 
 }
 
 export function EmulatorTable({ emulators, onViewDetails, onEdit, onToggleStatus }: EmulatorTableProps) {
@@ -86,7 +87,7 @@ export function EmulatorTable({ emulators, onViewDetails, onEdit, onToggleStatus
                         </div>
                         <Switch
                           checked={emulator.status === "CONNECTED"}
-                          onCheckedChange={() => onToggleStatus(emulator.id, emulator.status)}
+                          onCheckedChange={() => onToggleStatus(emulator.id, emulator.status as EmulatorStatus)}
                           aria-label={`Toggle status for ${emulator.name}`}
                         />
                       </DropdownMenuItem>

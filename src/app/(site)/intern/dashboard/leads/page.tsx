@@ -46,6 +46,7 @@ export default function LeadsPage() {
   const [filtroChannel, setFiltroChannel] = React.useState<"ALL" | "whatsapp" | "email" | "sms">("ALL")
 
   // Estados dos modais
+  const [importFile, setLocalImportFile] = React.useState<File | null>(null)
   const [isImportModalOpen, setIsImportModalOpen] = React.useState(false)
   const [selectedLeadForDetails, setSelectedLeadForDetails] = React.useState<Lead | null>(null)
   const [isDetailsModalOpen, setIsDetailsModalOpen] = React.useState(false)
@@ -88,6 +89,9 @@ export default function LeadsPage() {
     }
   )
 
+    const handleSetImportFile = (file: File | null) => {
+    setLocalImportFile(file)
+  }
   // Hook para tags
   const {
     tags,
@@ -587,14 +591,68 @@ const handleAddTag = async () => {
             <DialogTitle>Importar Contatos</DialogTitle>
             <DialogDescription>Faça o upload de um arquivo CSV para importar novos leads.</DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="flex flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed p-6 text-center">
-              <Upload className="h-12 w-12 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Arraste e solte seu arquivo CSV aqui, ou</p>
-              <Button variant="outline">Selecionar Arquivo</Button>
-              <p className="text-xs text-muted-foreground">Max. 10MB, formato CSV</p>
-            </div>
+           <div className="grid gap-4 py-4">
+      <form
+        className="relative flex flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center transition-colors duration-200 hover:border-gray-400 hover:bg-gray-100 data-[dragging=true]:border-blue-500 data-[dragging=true]:bg-blue-50"
+        onDragOver={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          e.currentTarget.setAttribute("data-dragging", "true")
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          e.currentTarget.removeAttribute("data-dragging")
+        }}
+        onDrop={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          e.currentTarget.removeAttribute("data-dragging")
+          const file = e.dataTransfer.files?.[0]
+          if (file) handleSetImportFile(file)
+        }}
+        onSubmit={(e) => {
+          e.preventDefault()
+          // handle file upload here
+        }}
+      >
+        <Upload className="h-12 w-12 text-muted-foreground" />
+        <p className="text-sm text-muted-foreground">Arraste e solte seu arquivo CSV aqui, ou</p>
+        <input
+          type="file"
+          accept=".csv,.xlsx"
+          className="hidden"
+          id="csv-upload"
+          onChange={(e) => {
+            const file = e.target.files?.[0]
+            if (file) handleSetImportFile(file)
+          }}
+        />
+      <label htmlFor="csv-upload" className="cursor-pointer">
+  <Button variant="outline" asChild>
+    <span>Selecionar Arquivo</span>
+  </Button>
+</label>
+        <p className="text-xs text-muted-foreground">Max. 10MB, formato CSV</p>
+        {importFile && (
+          <div className="mt-4 flex items-center gap-3 rounded-md bg-white p-3 shadow-sm">
+            <span className="text-sm font-medium text-primary truncate max-w-[180px]">{importFile.name}</span>
+            <span className="text-xs text-muted-foreground flex-shrink-0">
+              {(importFile.size / (1024 * 1024)).toFixed(2)} MB
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleSetImportFile(null)}
+              className="ml-auto flex-shrink-0"
+            >
+              <X className="h-4 w-4 mr-1" />
+              Remover
+            </Button>
           </div>
+        )}
+      </form>
+    </div>
           <DialogFooter>
             <Button type="submit">Importar</Button>
           </DialogFooter>

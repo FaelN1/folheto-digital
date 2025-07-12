@@ -160,18 +160,18 @@ export default function EmulatorsPage() {
   }
 
   // No company found
-  if (!hasCompany || !companyId) {
-    return (
-      <div className="flex-1 space-y-8 p-8">
-        <div className="flex items-center justify-center h-[400px]">
-          <div className="text-center">
-            <p className="text-muted-foreground mb-4">Nenhuma empresa associada ao usuário</p>
-            <p className="text-sm text-muted-foreground">Entre em contato com o administrador para associar uma empresa</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // if (hasCompany || companyId) {
+  //   return (
+  //     <div className="flex-1 space-y-8 p-8">
+  //       <div className="flex items-center justify-center h-[400px]">
+  //         <div className="text-center">
+  //           <p className="text-muted-foreground mb-4">Nenhuma empresa associada ao usuário</p>
+  //           <p className="text-sm text-muted-foreground">Entre em contato com o administrador para associar uma empresa</p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   // Loading state for emulators
   if (isLoadingEmulators) {

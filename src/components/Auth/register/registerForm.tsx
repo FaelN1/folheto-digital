@@ -1,52 +1,66 @@
 'use client';
 import { useState } from "react";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
-import { loginAuth } from "@/hooks/useAuth/loginAuth";
-
-
-export function LoginForm() {
+import { useAuth } from "@/hooks/useAuth/useAuth";
+import Link from "next/link"
+export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [companyId, setCompanyId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
+  const { register } = useAuth();
 
-  try {
-    const data = await loginAuth({ email, password });
-    toast("Login realizado com sucesso!", {
-      description: "Redirecionando para o dashboard...",
-    });
-    // Redirecionar ou salvar token, se necessário
-  } catch (error: any) {
-    toast("Erro ao fazer login!", {
-      description: error?.response?.data?.message || "Verifique suas credenciais."
-    });
-  } finally {
-    setIsLoading(false);
-  }
-};
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      await register(name, email, password, companyId);
+    } catch (error) {
+      // Erro já tratado no contexto
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Card className="w-full border-0 shadow-large bg-card/100 backdrop-blur-sm">
       <CardHeader className="space-y-1 text-center pb-8">
         <CardTitle className="text-3xl font-bold text-foreground">
-          Entrar
+          Registrar
         </CardTitle>
         <CardDescription className="text-muted-foreground text-base">
-          Acesse sua conta para continuar
+          Crie sua conta para começar
         </CardDescription>
       </CardHeader>
       
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-sm font-medium text-foreground">
+              Nome
+            </Label>
+            <div className="relative">
+              <User className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="name"
+                type="text"
+                placeholder="Digite seu nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="pl-10 h-12 border-border bg-background/50 focus:bg-background transition-colors"
+                required
+              />
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm font-medium text-foreground">
               E-mail
@@ -59,6 +73,24 @@ export function LoginForm() {
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="pl-10 h-12 border-border bg-background/50 focus:bg-background transition-colors"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="companyId" className="text-sm font-medium text-foreground">
+           Empresa
+            </Label>
+            <div className="relative">
+              <Building className="absolute left-3 top-4 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="companyId"
+                type="text"
+                placeholder="ID da empresa"
+                value={companyId}
+                onChange={(e) => setCompanyId(e.target.value)}
                 className="pl-10 h-12 border-border bg-background/50 focus:bg-background transition-colors"
                 required
               />
@@ -90,19 +122,6 @@ export function LoginForm() {
             </div>
           </div>
           
-          <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <input type="checkbox" className="rounded border-border" />
-              <span className="text-muted-foreground">Lembrar de mim</span>
-            </label>
-            {/* <button
-              type="button"
-              className="text-primary cursor-pointer hover:text-primary-glow transition-colors font-medium"
-            >
-              Esqueceu a senha?
-            </button> */}
-          </div>
-          
           <Button
             type="submit"
             variant="default"
@@ -110,19 +129,19 @@ export function LoginForm() {
             className="w-full cursor-pointer h-12 text-base font-medium"
             disabled={isLoading}
           >
-            {isLoading ? "Entrando..." : "Entrar"}
+            {isLoading ? "Registrando..." : "Registrar"}
           </Button>
         </form>
         
         <div className="mt-6 text-center">
           <p className="text-sm text-muted-foreground">
-            Não tem uma conta?{" "}
-            <button 
-            type="button"
-            className="text-primary cursor-pointer hover:text-primary-glow transition-colors font-medium"
-            onClick={() => window.location.href = "/register"}>
-              Criar conta
-            </button>
+            Já possui uma conta?{" "}
+            <Link
+              href="/auth/login"
+              className="text-primary cursor-pointer hover:text-primary-glow transition-colors font-medium"
+            >
+              Entrar na conta
+            </Link>
           </p>
         </div>
       </CardContent>

@@ -1,7 +1,7 @@
 'use client'
 
 import { format } from "date-fns"
-import { User, MessageCircle, MoreVertical, Smile, Paperclip, Send, Wifi, Signal, BatteryCharging } from 'lucide-react'
+import {MessageCircle, MoreVertical, Smile, Paperclip, Send, Wifi, Signal, BatteryCharging } from 'lucide-react'
 import Image from "next/image"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"

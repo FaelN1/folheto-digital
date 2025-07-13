@@ -4,9 +4,9 @@ import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
-  CreditCard,
+
   LogOut,
-  Sparkles,
+
   User,
   Building,
   Shield,
@@ -125,9 +125,9 @@ export function NavUser({ user }: NavUserProps) {
                 </div>
               </div>
             </DropdownMenuLabel>
-            
+
             <DropdownMenuSeparator />
-            
+
             {/* User Info Section */}
             <DropdownMenuGroup>
               <DropdownMenuItem className="flex flex-col items-start gap-2 p-3">
@@ -145,18 +145,18 @@ export function NavUser({ user }: NavUserProps) {
                 </div>
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            
+
             <DropdownMenuSeparator />
-            
+
             {/* <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Sparkles className="mr-2 h-4 w-4" />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup> */}
-            
+
             <DropdownMenuSeparator />
-            
+
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <BadgeCheck className="mr-2 h-4 w-4" />
@@ -171,9 +171,9 @@ export function NavUser({ user }: NavUserProps) {
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            
+
             <DropdownMenuSeparator />
-            
+
             <DropdownMenuItem onClick={logout} className="text-red-600 focus:text-red-600">
               <LogOut className="mr-2 h-4 w-4" />
               Log out

@@ -23,7 +23,7 @@ export function RegisterForm() {
 
     try {
       await register(name, email, password, companyId);
-    } catch (error) {
+    } catch {
       // Erro já tratado no contexto
     } finally {
       setIsLoading(false);

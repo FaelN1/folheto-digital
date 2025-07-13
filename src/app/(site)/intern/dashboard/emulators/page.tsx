@@ -17,8 +17,7 @@ import { toast } from "sonner"
 import { 
   useEmulatorsByCompany,
   useUpdateEmulatorStatus,
-  EmulatorStatus,
-  type Emulator
+  EmulatorStatus
 } from "@/hooks/emulators/useEmulators"
 import { useCompanyId } from "@/hooks/companies/useCompanies"
 
@@ -37,7 +36,6 @@ export default function EmulatorsPage() {
     companyId, 
     isLoading: isLoadingCompany,
     error: companyError,
-    hasCompany 
   } = useCompanyId()
 
   // Use the correct hook to fetch emulators by company
@@ -53,8 +51,10 @@ export default function EmulatorsPage() {
   })
 
   // Sempre garanta que emulators é um array
-  const emulators = Array.isArray(emulatorsRaw) ? emulatorsRaw : []
-  
+const emulators = React.useMemo(
+  () => (Array.isArray(emulatorsRaw) ? emulatorsRaw : []),
+  [emulatorsRaw]
+)
   // Memoized filtered emulators
   const filteredEmulators = React.useMemo(() => {
     let filtered = emulators
@@ -95,27 +95,26 @@ export default function EmulatorsPage() {
     setDialogOpen(true)
   }
 
-  const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
-    const emulator = emulators.find(e => e.id === id)
-    if (!emulator) return
-
-    const newStatus = currentStatus === EmulatorStatus.CONNECTED 
-      ? EmulatorStatus.DISCONNECTED 
-      : EmulatorStatus.CONNECTED
-
-    // Use the specific hook for updating status
-    const updateStatus = useUpdateEmulatorStatus({
-      onSuccess: (updatedEmulator) => {
-        toast.success(`Status do emulador ${updatedEmulator.name} alterado para ${newStatus}`)
-        refetch() // Atualizar lista após mudança
-      },
-      onError: (error) => {
-        toast.error(`Erro ao alterar status: ${error.message}`)
-      }
-    })
-
-    updateStatus.mutate({ id, status: newStatus })
+const updateStatus = useUpdateEmulatorStatus({
+  onSuccess: (updatedEmulator) => {
+    toast.success(`Status do emulador ${updatedEmulator.name} alterado`)
+    refetch()
+  },
+  onError: (error) => {
+    toast.error(`Erro ao alterar status: ${error.message}`)
   }
+})
+
+const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
+  const emulator = emulators.find(e => e.id === id)
+  if (!emulator) return
+
+  const newStatus = currentStatus === EmulatorStatus.CONNECTED
+    ? EmulatorStatus.DISCONNECTED
+    : EmulatorStatus.CONNECTED
+
+  updateStatus.mutate({ id, status: newStatus })
+}
 
   const handleNewEmulator = () => {
     if (!companyId) {

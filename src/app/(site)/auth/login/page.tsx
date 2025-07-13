@@ -1,31 +1,9 @@
 "use client"
 
 import { LoginForm } from "../../../../components/Auth/login/loginForm"
-import { Github, Twitter, Linkedin, Instagram } from "lucide-react"
+import { Github, Linkedin, Instagram } from "lucide-react"
+import Image from "next/image"
 
-const slowPulse = `
-  @keyframes slowPulse {
-    0%, 100% {
-      transform: scale(1);
-      opacity: 0.05;
-    }
-    50% {
-      transform: scale(1.05);
-      opacity: 0.08;
-    }
-  }
-`
-
-const fadeInOut = `
-  @keyframes fadeInOut {
-    0%, 100% {
-      opacity: 0;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
-`
 
 export default function RegisterPage() {
   return (
@@ -35,17 +13,24 @@ export default function RegisterPage() {
       <div className="hidden lg:flex lg:w-1/2 bg-white items-center justify-center p-12">
         <div className="text-center text-primary-foreground">
           <div className="mb-8">
-            <div className="w-24 h-24 bg-primary-foreground/20 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
-              <div className="w-12 h-12 bg-blue-500 rounded-lg transform rotate-45"></div>
+            {/* Logo real */}
+            <div className="flex flex-col items-center mb-6">
+              <Image
+                src="/images/Logos_folheto/LogoBlue.png"
+                alt="Folheto Digital"
+                width={500}
+                height={120}
+                className="mb-4"
+                priority
+              />
+              {/* <h1 className="text-4xl font-bold text-[#23272f]">FOLHETO DIGITAL</h1> */}
             </div>
-            <h1 className="text-4xl font-bold mb-4 text-[#23272f]">FOLHETO DIGITAL</h1>
             {/* <p className="text-xl text-primary-foreground/80 max-w-md">
               A plataforma completa para gerenciar seus folhetos digitais de forma moderna e eficiente
             </p> */}
           </div>
         </div>
       </div>
-   
 
          {/* Seção do Formulário - Lado Direito */}
       <div className="w-full lg:w-1/2 relative flex items-center justify-center p-4 lg:p-12 overflow-hidden">
@@ -110,13 +95,13 @@ export default function RegisterPage() {
           <a href="#" className="text-gray-400 hover:text-white transition-colors duration-300" aria-label="GitHub">
             <Github className="h-6 w-6" />
           </a>
-       
+         <a href="#" className="text-gray-400 hover:text-white transition-colors duration-300" aria-label="Instagram">
+            <Instagram className="h-6 w-6" />
+          </a>
           <a href="#" className="text-gray-400 hover:text-white transition-colors duration-300" aria-label="LinkedIn">
             <Linkedin className="h-6 w-6" />
           </a>
-          <a href="#" className="text-gray-400 hover:text-white transition-colors duration-300" aria-label="Instagram">
-            <Instagram className="h-6 w-6" />
-          </a>
+        
         </div>
       </div>
          

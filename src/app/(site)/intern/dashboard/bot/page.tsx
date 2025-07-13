@@ -99,9 +99,7 @@ export default function TypebotManagementPage() {
     setIsCreatingNew(false) // Reseta o estado de criação
   }
 
-  const handleToggleStatus = (id: string) => {
-    setTypebots((prev) => prev.map((bot) => (bot.id === id ? { ...bot, isActive: !bot.isActive } : bot)))
-  }
+ 
 
   const handleDeleteBot = (id: string) => {
     if (confirm("Tem certeza que deseja deletar este Typebot?")) {
@@ -217,7 +215,7 @@ export default function TypebotManagementPage() {
               <div className="max-w-md">
                 <h3 className="text-lg font-medium mb-2">Selecione um Typebot</h3>
                 <p className="text-sm">
-                  Escolha um Typebot na lista à esquerda para configurar ou clique em "Criar Novo" para começar.
+                  Escolha um Typebot na lista à esquerda para configurar ou clique em &quot;Criar Novo&quot; para começar.
                 </p>
               </div>
             </div>

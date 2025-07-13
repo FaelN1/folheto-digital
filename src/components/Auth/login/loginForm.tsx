@@ -20,12 +20,12 @@ export function LoginForm() {
     setIsLoading(true);
 
    try {
-  console.log('[LoginForm] Enviando dados para login...');
   await login(email, password);
-  console.log('[LoginForm] Login OK');
-} catch (error: any) {
-  console.error('[LoginForm] Erro no login:', error);
-}
+    } catch {
+      // Erro já tratado no contexto
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

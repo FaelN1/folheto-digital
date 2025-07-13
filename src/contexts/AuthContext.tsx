@@ -9,6 +9,7 @@ interface User {
   name: string;
   email: string;
   companyId: string;
+  role: string;
 }
 
 interface AuthContextType {
@@ -19,6 +20,7 @@ interface AuthContextType {
   register: (name: string, email: string, password: string, companyId: string) => Promise<void>;
   logout: () => void;
   getMe: () => Promise<void>;
+  checkUserStatus: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -79,7 +81,13 @@ const login = async (email: string, password: string) => {
     await getMe();
 
     toast.success('Login realizado com sucesso!');
-    router.push('/intern/dashboard');
+    
+    // Verificar se o usuário é GUEST sem companyId
+    if (response.user.role === 'GUEST' && (!response.user.companyId || response.user.companyId === '')) {
+      router.push('/intern/pending-company');
+    } else {
+      router.push('/intern/dashboard');
+    }
   } catch (error: any) {
     console.error('Erro no login:', error);
     const message = error.response?.data?.message || 'Erro ao fazer login';
@@ -106,8 +114,26 @@ const login = async (email: string, password: string) => {
     try {
       const userData = await authService.getMe();
       setUser(userData);
+      
+      // Verificar status após atualizar os dados do usuário
+      setTimeout(() => {
+        checkUserStatus();
+      }, 100);
     } catch (error) {
       throw error;
+    }
+  };
+
+  const checkUserStatus = () => {
+    if (user && typeof window !== 'undefined') {
+      const isGuestWithoutCompany = user.role === 'GUEST' && (!user.companyId || user.companyId === '');
+      const currentPath = window.location.pathname;
+      
+      if (isGuestWithoutCompany && currentPath !== '/intern/pending-company') {
+        router.push('/intern/pending-company');
+      } else if (!isGuestWithoutCompany && currentPath === '/intern/pending-company') {
+        router.push('/intern/dashboard');
+      }
     }
   };
 
@@ -133,6 +159,7 @@ const logout = () => {
         register,
         logout,
         getMe,
+        checkUserStatus,
       }}
     >
       {children}

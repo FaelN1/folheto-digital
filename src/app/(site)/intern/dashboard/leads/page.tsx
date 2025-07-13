@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { MultiSelectTags } from "@/components/ui/multi-select-tags"
-import { useLeadsByCompany, useLeadTags, type Lead, type CreateLeadParams } from "@/hooks/leads/useLeads"
+import { useLeadsByCompany,  type Lead, type CreateLeadParams } from "@/hooks/leads/useLeads"
 import { useTagsByCompany, type Tag as CompanyTag } from "@/hooks/tags/useTags"
 import { toast } from "sonner"
 

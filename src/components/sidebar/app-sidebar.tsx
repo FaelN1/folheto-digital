@@ -15,6 +15,7 @@ import {
   Settings,
   Search,
   Megaphone,
+  Shield,
 } from "lucide-react"
 
 import { NavMain } from "@/components/sidebar/nav-main"
@@ -30,127 +31,23 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/contexts/AuthContext"
+import { usePermissions } from "@/hooks/usePermissions"
+
+// Mapeamento de ícones
+const iconMap = {
+  LayoutDashboard,
+  Megaphone,
+  Users,
+  Bot,
+  Share2,
+  BarChart2,
+  Settings,
+  Shield,
+  Moon,
+  Search,
+}
 
 const data = {
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/intern/dashboard",
-      icon: LayoutDashboard,
-      isActive: true,
-    },
-    {
-      title: "Campanha",
-      url: "/intern/dashboard/campaign",
-      icon: Megaphone,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Leads",
-      url: "/intern/dashboard/leads",
-      icon: Users,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Bot",
-      url: "/intern/dashboard/bot",
-      icon: Bot,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Canais",
-      url: "/intern/dashboard/emulators",
-      icon: Share2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Relatórios",
-      url: "/intern/dashboard/reports",
-      icon: BarChart2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
   navSecondary: [
     {
       title: "Tema",
@@ -172,6 +69,16 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth()
+  const { getFilteredNavigation } = usePermissions()
+  
+  // Obter navegação filtrada baseada nas permissões do usuário
+  const filteredNavigation = getFilteredNavigation()
+  
+  // Converter para o formato esperado pelo NavMain, mapeando os ícones
+  const navMainItems = filteredNavigation.map(item => ({
+    ...item,
+    icon: iconMap[item.icon as keyof typeof iconMap] || LayoutDashboard,
+  }))
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -193,7 +100,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMainItems} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

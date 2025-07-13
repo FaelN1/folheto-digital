@@ -8,6 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { TypebotConfigPanel } from "./type-bot-config-panel" // Importa o painel de configuração
+import RouteGuard from "@/components/RouteGuard"
+import PermissionGuard from "@/components/PermissionGuard"
 
 // Interface para o Typebot
 interface Typebot {
@@ -112,116 +114,138 @@ export default function TypebotManagementPage() {
   }
 
   return (
-    <div className="flex h-full w-full bg-gray-50 min-h-[calc(100vh-200px)]">
-      {/* Painel Esquerdo: Lista de Typebots */}
-      <Card className="flex flex-col w-full md:w-2/5 lg:w-1/3 border-r rounded-none shadow-none">
-        <CardHeader className="flex flex-row items-center justify-between border-b p-4">
-          <CardTitle className="text-xl">Meus Typebots</CardTitle>
-          <Button size="sm" onClick={handleCreateBot}>
-            <PlusCircle className="h-4 w-4 mr-1" />
-            <span className="hidden sm:inline">Criar Novo</span>
-            <span className="sm:hidden">Novo</span>
-          </Button>
-        </CardHeader>
-        <CardContent className="flex-1 overflow-y-auto p-0 max-h-[calc(100vh-300px)]">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead className="text-center">Status</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {typebots.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={3} className="h-24 text-center text-muted-foreground">
-                    Nenhum Typebot cadastrado.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                typebots.map((typebot) => (
-                  <TableRow
-                    key={typebot.id}
-                    className={`cursor-pointer hover:bg-gray-50 ${selectedTypebotId === typebot.id ? "bg-blue-50" : ""}`}
-                    onClick={() => setSelectedTypebotId(typebot.id)}
-                  >
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage src={typebot.avatarUrl || "/placeholder.svg"} alt={typebot.name} />
-                          <AvatarFallback>{typebot.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-medium">{typebot.name}</span>
-                          <span className="text-xs text-muted-foreground">{typebot.createdAt}</span>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Badge variant={typebot.isActive ? "default" : "secondary"} className="text-xs">
-                        {typebot.isActive ? "Ativo" : "Inativo"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setSelectedTypebotId(typebot.id)
-                          }}
-                          aria-label={`Editar ${typebot.name}`}
-                        >
-                          <Pencil className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleDeleteBot(typebot.id)
-                          }}
-                          aria-label={`Deletar ${typebot.name}`}
-                        >
-                          <Trash2 className="h-3 w-3 text-red-500" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-        <CardFooter className="border-t p-4 text-sm text-muted-foreground">
-          <span>Total: {typebots.length} Typebots</span>
-        </CardFooter>
-      </Card>
-
-      {/* Painel Direito: Configurações do Typebot */}
-      <div className="flex-1 flex flex-col">
-        {selectedTypebot ? (
-          <TypebotConfigPanel
-            key={selectedTypebot.id}
-            typebot={selectedTypebot}
-            onSave={handleSaveBot}
-            onCancel={handleCancelEdit}
-          />
-        ) : (
-          <Card className="flex-1 flex flex-col rounded-none shadow-none">
-            <div className="flex flex-1 items-center justify-center text-muted-foreground p-8 text-center">
-              <div className="max-w-md">
-                <h3 className="text-lg font-medium mb-2">Selecione um Typebot</h3>
-                <p className="text-sm">
-                  Escolha um Typebot na lista à esquerda para configurar ou clique em &quot;Criar Novo&quot; para começar.
-                </p>
+    <RouteGuard permissions="bot.view">
+      <div className="flex h-full w-full bg-gray-50 min-h-[calc(100vh-200px)]">
+        {/* Painel Esquerdo: Lista de Typebots */}
+        <div className="w-1/3 border-r">
+          <Card className="h-full rounded-none border-0 border-r">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Typebots</CardTitle>
+                <PermissionGuard permissions="bot.configure">
+                  <Button size="sm" onClick={handleCreateBot}>
+                    <PlusCircle className="h-4 w-4 mr-2" />
+                    Criar Novo
+                  </Button>
+                </PermissionGuard>
               </div>
-            </div>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-y-auto p-0 max-h-[calc(100vh-300px)]">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead className="text-center">Status</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {typebots.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="h-24 text-center text-muted-foreground">
+                        Nenhum Typebot cadastrado.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    typebots.map((typebot) => (
+                      <TableRow
+                        key={typebot.id}
+                        className={`cursor-pointer hover:bg-gray-50 ${selectedTypebotId === typebot.id ? "bg-blue-50" : ""}`}
+                        onClick={() => setSelectedTypebotId(typebot.id)}
+                      >
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={typebot.avatarUrl || "/placeholder.svg"} alt={typebot.name} />
+                              <AvatarFallback>{typebot.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col">
+                              <span className="text-sm font-medium">{typebot.name}</span>
+                              <span className="text-xs text-muted-foreground">{typebot.createdAt}</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant={typebot.isActive ? "default" : "secondary"} className="text-xs">
+                            {typebot.isActive ? "Ativo" : "Inativo"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setSelectedTypebotId(typebot.id)
+                              }}
+                              aria-label={`Editar ${typebot.name}`}
+                            >
+                              <Pencil className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleDeleteBot(typebot.id)
+                              }}
+                              aria-label={`Deletar ${typebot.name}`}
+                            >
+                              <Trash2 className="h-3 w-3 text-red-500" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+            <CardFooter className="border-t p-4 text-sm text-muted-foreground">
+              <span>Total: {typebots.length} Typebots</span>
+            </CardFooter>
           </Card>
-        )}
+        </div>
+
+        {/* Painel Direito: Configurações do Typebot */}
+        <div className="flex-1">
+          {selectedTypebot ? (
+            <PermissionGuard
+              permissions="bot.configure"
+              fallback={
+                <Card className="h-full rounded-none border-0">
+                  <CardContent className="flex items-center justify-center h-full">
+                    <div className="text-center">
+                      <h3 className="text-lg font-medium mb-2">Acesso Restrito</h3>
+                      <p className="text-sm text-gray-500">
+                        Você pode visualizar os bots, mas não tem permissão para configurá-los.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              }
+            >
+              <TypebotConfigPanel
+                typebot={selectedTypebot}
+                onSave={handleSaveBot}
+                onCancel={handleCancelEdit}
+              />
+            </PermissionGuard>
+          ) : (
+            <Card className="flex-1 flex flex-col rounded-none shadow-none">
+              <div className="flex flex-1 items-center justify-center text-muted-foreground p-8 text-center">
+                <div className="max-w-md">
+                  <h3 className="text-lg font-medium mb-2">Selecione um Typebot</h3>
+                  <p className="text-sm">
+                    Escolha um Typebot na lista à esquerda para configurar ou clique em "Criar Novo" para começar.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
-    </div>
+    </RouteGuard>
   )
 }

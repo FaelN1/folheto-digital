@@ -230,18 +230,6 @@ export default function CampaignsPage() {
     )
   }
 
-  if (companyId) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Empresa não encontrada</h2>
-          <p className="text-muted-foreground">
-            Não foi possível identificar sua empresa. Entre em contato com o suporte.
-          </p>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">

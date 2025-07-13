@@ -21,6 +21,7 @@ import {
   type Emulator
 } from "@/hooks/emulators/useEmulators"
 import { useCompanyId } from "@/hooks/companies/useCompanies"
+import PermissionGuard from "@/components/PermissionGuard"
 
 export default function EmulatorsPage() {
   const [searchTerm, setSearchTerm] = React.useState("")
@@ -215,12 +216,16 @@ export default function EmulatorsPage() {
           </p>
         </div>
         <div className="flex items-center space-x-2">
+          <PermissionGuard permissions="emulator.refresh">
           <Button onClick={() => refetch()} variant="outline" size="sm">
             Atualizar
           </Button>
+          </PermissionGuard>
+          <PermissionGuard permissions="emulator.create">
           <Button onClick={handleNewEmulator}>
             <Plus className="mr-2 h-4 w-4" /> Novo Emulador
           </Button>
+          </PermissionGuard>
         </div>
       </div>
 
@@ -280,9 +285,12 @@ export default function EmulatorsPage() {
             <p className="text-muted-foreground mb-4">
               Nenhum emulador encontrado para sua empresa
             </p>
-            <Button onClick={handleNewEmulator}>
-              <Plus className="mr-2 h-4 w-4" /> Criar primeiro emulador
-            </Button>
+
+            <PermissionGuard permissions="emulator.create">
+              <Button onClick={handleNewEmulator}>
+                <Plus className="mr-2 h-4 w-4" /> Criar primeiro emulador
+              </Button>
+            </PermissionGuard>
           </div>
         </div>
       ) : filteredEmulators.length === 0 ? (

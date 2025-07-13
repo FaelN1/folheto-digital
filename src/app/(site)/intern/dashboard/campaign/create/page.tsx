@@ -15,7 +15,7 @@ import { MultiSelectTags } from "@/components/ui/multi-select-tags"
 import { toast } from "sonner"
 import Picker from "@emoji-mart/react"
 import data from "@emoji-mart/data"
-import IPhoneMockup from "./IphoneMockup"
+import IPhoneMockup from "../IphoneMockup"
 import type { Emoji } from "@emoji-mart/data"
 
 // Hooks

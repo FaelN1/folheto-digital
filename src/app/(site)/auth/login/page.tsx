@@ -1,7 +1,8 @@
 "use client"
 
 import { LoginForm } from "../../../../components/Auth/login/loginForm"
-import { Github, Linkedin, Instagram } from "lucide-react"
+import {  Linkedin, Instagram } from "lucide-react"
+import { FaWhatsapp } from "react-icons/fa"
 import Image from "next/image"
 
 
@@ -92,8 +93,8 @@ export default function RegisterPage() {
         </div>
         {/* Rodapé com Ícones de Redes Sociais */}
         <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-6 z-10">
-          <a href="#" className="text-gray-400 hover:text-white transition-colors duration-300" aria-label="GitHub">
-            <Github className="h-6 w-6" />
+          <a href="#" className="text-gray-400 hover:text-white transition-colors duration-300" aria-label="Whatsapp">
+                <FaWhatsapp className="h-6 w-6" />
           </a>
          <a href="#" className="text-gray-400 hover:text-white transition-colors duration-300" aria-label="Instagram">
             <Instagram className="h-6 w-6" />

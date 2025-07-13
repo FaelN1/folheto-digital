@@ -2,12 +2,13 @@
 
 import { useState } from "react"
 import { Search, Trash2 } from "lucide-react"
-import Link from "next/link"
+
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 // Dados de exemplo das campanhas
 const campaigns = [
@@ -88,9 +89,7 @@ export default function CampaignsList() {
           <h1 className="text-3xl font-bold">Campanhas</h1>
           <p className="text-muted-foreground">Gerencie suas campanhas publicitárias</p>
         </div>
-        <Button asChild>
-          <Link href="/intern/dashboard/campaign/create">Nova Campanha</Link>
-        </Button>
+        <Button>Nova Campanha</Button>
       </div>
 
       {/* Filtros */}
@@ -120,10 +119,10 @@ export default function CampaignsList() {
             </Select>
             <Select value={platformFilter} onValueChange={setPlatformFilter}>
               <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Emulador" />
+                <SelectValue placeholder="Canal" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="todas">Todos os emuladores</SelectItem>
+                <SelectItem value="todas">Todos os canais</SelectItem>
                 <SelectItem value="Google Ads">Google Ads</SelectItem>
                 <SelectItem value="Facebook Ads">Facebook Ads</SelectItem>
                 <SelectItem value="Meta Ads">Meta Ads</SelectItem>
@@ -133,41 +132,43 @@ export default function CampaignsList() {
         </CardContent>
       </Card>
 
-      {/* Lista de Campanhas */}
-      <div className="grid gap-4">
-        {filteredCampaigns.map((campaign) => (
-          <Card key={campaign.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="pt-6">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 flex-1">
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Nome</p>
-                    <p className="font-semibold">{campaign.name}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Emulador</p>
-                    <p className="font-medium">{campaign.emulador}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Quantidade de contatos</p>
-                    <p className="font-medium">{formatNumber(campaign.quantidadeContatos)}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Status</p>
+      {/* Tabela de Campanhas */}
+      <Card>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[35%] text-left pl-6">Nome</TableHead>
+                <TableHead className="w-[20%] text-center">Canal</TableHead>
+                <TableHead className="w-[25%] text-center">Quantidade de contatos</TableHead>
+                <TableHead className="w-[15%] text-center">Status</TableHead>
+                <TableHead className="w-[5%] text-center pr-6">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredCampaigns.map((campaign) => (
+                <TableRow key={campaign.id} className="hover:bg-muted/50">
+                  <TableCell className="font-medium pl-6 py-5">{campaign.name}</TableCell>
+                  <TableCell className="py-5 text-center">{campaign.emulador}</TableCell>
+                  <TableCell className="text-center py-5 font-mono">
+                    {formatNumber(campaign.quantidadeContatos)}
+                  </TableCell>
+                  <TableCell className="py-5 text-center">
                     <Badge className={getStatusColor(campaign.status)}>
                       {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
                     </Badge>
-                  </div>
-                </div>
-                <Button variant="destructive" size="sm">
-                  <Trash2 className="h-4 w-4 mr-2 cursor-pointer  " />
-                  Apagar
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                  </TableCell>
+                  <TableCell className="text-center py-5 pr-6">
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       {filteredCampaigns.length === 0 && (
         <Card>

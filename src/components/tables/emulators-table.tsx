@@ -14,7 +14,7 @@ export function EmulatorsTable() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Lista de Emuladores</CardTitle>
+        <CardTitle>Lista de Canais</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>

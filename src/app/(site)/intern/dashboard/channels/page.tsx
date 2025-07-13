@@ -22,7 +22,7 @@ import {
 import { useCompanyId } from "@/hooks/companies/useCompanies"
 import PermissionGuard from "@/components/PermissionGuard"
 
-export default function EmulatorsPage() {
+export default function ChannelsPage() {
   const [searchTerm, setSearchTerm] = React.useState("")
   const [selectedStatus, setSelectedStatus] = React.useState<"ALL" | "CONNECTED" | "DISCONNECTED">("ALL")
   const [viewMode, setViewMode] = React.useState<"table" | "grid">("table")
@@ -180,7 +180,7 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
         <div className="flex items-center justify-center h-[400px]">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Carregando emuladores...</p>
+            <p className="text-muted-foreground">Carregando canais...</p>
           </div>
         </div>
       </div>
@@ -193,7 +193,7 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
       <div className="flex-1 space-y-8 p-8">
         <div className="flex items-center justify-center h-[400px]">
           <div className="text-center">
-            <p className="text-destructive mb-4">Erro ao carregar emuladores: {emulatorsError.message}</p>
+            <p className="text-destructive mb-4">Erro ao carregar canais: {emulatorsError.message}</p>
             <Button onClick={() => refetch()} variant="outline">
               Tentar novamente
             </Button>
@@ -208,10 +208,10 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
       {/* Header da página */}
       <div className="flex items-center justify-between space-y-2">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Emuladores</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Canais</h2>
           <p className="text-muted-foreground">
-            Gerencie os emuladores da sua empresa. 
-            {emulators.length > 0 && ` (${filteredEmulators.length} de ${emulators.length} emuladores)`}
+            Gerencie os canais da sua empresa. 
+            {emulators.length > 0 && ` (${filteredEmulators.length} de ${emulators.length} canais)`}
           </p>
         </div>
         <div className="flex items-center space-x-2">
@@ -222,7 +222,7 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
           </PermissionGuard>
           <PermissionGuard permissions="emulator.create">
           <Button onClick={handleNewEmulator}>
-            <Plus className="mr-2 h-4 w-4" /> Novo Emulador
+            <Plus className="mr-2 h-4 w-4" /> Novo Canal
           </Button>
           </PermissionGuard>
         </div>
@@ -282,12 +282,12 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
         <div className="flex items-center justify-center h-[400px]">
           <div className="text-center">
             <p className="text-muted-foreground mb-4">
-              Nenhum emulador encontrado para sua empresa
+              Nenhum canal encontrado para sua empresa
             </p>
 
             <PermissionGuard permissions="emulator.create">
               <Button onClick={handleNewEmulator}>
-                <Plus className="mr-2 h-4 w-4" /> Criar primeiro emulador
+                <Plus className="mr-2 h-4 w-4" /> Criar primeiro canal
               </Button>
             </PermissionGuard>
           </div>
@@ -295,7 +295,7 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
       ) : filteredEmulators.length === 0 ? (
         <div className="flex items-center justify-center h-[400px]">
           <div className="text-center">
-            <p className="text-muted-foreground">Nenhum emulador encontrado com os filtros aplicados</p>
+            <p className="text-muted-foreground">Nenhum canal encontrado com os filtros aplicados</p>
             <Button 
               onClick={() => {
                 setSearchTerm("")
@@ -308,11 +308,11 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
           </div>
         </div>
       ) : (
-        /* Tabela ou Grid de Emuladores */
+        /* Tabela ou Grid de canais */
         <div className="space-y-4">
           {/* Results Summary */}
           <div className="text-sm text-muted-foreground">
-            Exibindo {filteredEmulators.length} de {emulators.length} emuladores
+            Exibindo {filteredEmulators.length} de {emulators.length} canais
             {searchTerm && ` para "${searchTerm}"`}
             {selectedStatus !== "ALL" && ` com status ${selectedStatus}`}
           </div>

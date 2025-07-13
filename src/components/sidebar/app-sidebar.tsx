@@ -56,7 +56,7 @@ const data = {
     },
     {
       title: "Configurações",
-      url: "#",
+      url: "/intern/dashboard/settings",
       icon: Settings,
     },
     {

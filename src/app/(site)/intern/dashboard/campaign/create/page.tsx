@@ -131,20 +131,19 @@ export default function CampaignsPage() {
   }
 
   // Validação do formulário
-  const validateForm = (): string | null => {
-    if (!formData.name.trim()) return "Nome da campanha é obrigatório"
-    if (!formData.selectedEmulator) return "Selecione um emulador"
-    if (!formData.selectedLead) return "Selecione um destinatário"
-    if (!formData.message.trim() && !formData.file) return "Adicione uma mensagem ou arquivo"
-    if (!companyId) return "Empresa não identificada"
-
-    if (formData.sendOption === "agendar") {
-      if (!formData.scheduledDate) return "Selecione a data para agendamento"
-      if (!formData.scheduledTime) return "Selecione o horário para agendamento"
-    }
-
-    return null
+const validateForm = (): string | null => {
+  if (!formData.name.trim()) return "Nome da campanha é obrigatório"
+  if (!formData.selectedEmulator) return "Selecione um canal"
+  if (!formData.message.trim() && !formData.file) return "Adicione uma mensagem ou arquivo"
+  if (!companyId) return "Empresa não identificada"
+  
+  if (formData.sendOption === "agendar") {
+    if (!formData.scheduledDate) return "Selecione a data para agendamento"
+    if (!formData.scheduledTime) return "Selecione o horário para agendamento"
   }
+  
+  return null
+}
 
   // Submit do formulário
   const handleSubmit = async (e: React.FormEvent) => {
@@ -256,146 +255,119 @@ export default function CampaignsPage() {
                     Informações da Campanha
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Nome da campanha */}
-                  <div className="space-y-2">
-                    <Label htmlFor="campaign-name" className="text-sm font-semibold">
-                      Nome da Campanha *
-                    </Label>
-                    <Input
-                      id="campaign-name"
-                      placeholder="Ex: Promoção Black Friday 2024"
-                      value={formData.name}
-                      onChange={(e) => updateFormData({ name: e.target.value })}
-                      className="h-11"
-                      required
-                    />
-                  </div>
+             
 
-                  {/* Descrição */}
-                  <div className="space-y-2">
-                    <Label htmlFor="campaign-description" className="text-sm font-semibold">
-                      Descrição (opcional)
-                    </Label>
-                    <Input
-                      id="campaign-description"
-                      placeholder="Descreva brevemente o objetivo desta campanha"
-                      value={formData.description}
-                      onChange={(e) => updateFormData({ description: e.target.value })}
-                      className="h-11"
-                    />
-                  </div>
+<CardContent className="space-y-6">
+  {/* Nome da campanha */}
+  <div className="space-y-2">
+    <Label htmlFor="campaign-name" className="text-sm font-semibold">
+      Nome da Campanha *
+    </Label>
+    <Input
+      id="campaign-name"
+      placeholder="Ex: Promoção Black Friday 2024"
+      value={formData.name}
+      onChange={(e) => updateFormData({ name: e.target.value })}
+      className="h-11"
+      required
+    />
+  </div>
 
-                  {/* Emulador e Lead */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="emulator" className="text-sm font-semibold">
-                        Emulador WhatsApp *
-                      </Label>
-                      <Select
-                        value={formData.selectedEmulator}
-                        onValueChange={(value) => updateFormData({ selectedEmulator: value })}
-                        disabled={isLoadingEmulators}
-                      >
-                        <SelectTrigger id="emulator" className="h-11 w-full">
-                          <SelectValue placeholder={
-                            isLoadingEmulators
-                              ? "Carregando emuladores..."
-                              : availableEmulators.length === 0
-                                ? "Nenhum emulador conectado"
-                                : "Selecione um emulador"
-                          } />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableEmulators.length === 0 ? (
-                            <div className="p-4 text-center text-muted-foreground">
-                              <p className="text-sm">Nenhum emulador conectado encontrado</p>
-                              <p className="text-xs mt-1">
-                                Verifique se há emuladores ativos na página de Emuladores
-                              </p>
-                            </div>
-                          ) : (
-                            availableEmulators.map((emulator) => (
-                              <SelectItem key={emulator.id} value={emulator.id}>
-                                <div className="flex items-center gap-3">
-                                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                                  <div className="flex flex-col items-start">
-                                    <span className="font-medium">{emulator.name}</span>
-                                    <span className="text-xs text-muted-foreground">{emulator.phone}</span>
-                                  </div>
-                                </div>
-                              </SelectItem>
-                            ))
-                          )}
-                        </SelectContent>
-                      </Select>
-                      {availableEmulators.length === 0 && !isLoadingEmulators && (
-                        <p className="text-xs text-orange-600">
-                          ⚠️ Nenhum emulador conectado. Configure um emulador primeiro.
-                        </p>
-                      )}
-                    </div>
+  {/* Canal e Tags - Layout lado a lado */}
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {/* Canal */}
+  <div className="space-y-2">
+    <Label htmlFor="emulator" className="text-sm font-semibold">
+      Canal *
+    </Label>
+    <Select
+      value={formData.selectedEmulator}
+      onValueChange={(value) => updateFormData({ selectedEmulator: value })}
+      disabled={isLoadingEmulators}
+    >
+      <SelectTrigger id="emulator" className="h-auto min-h-[46px] w-full">
+        <SelectValue placeholder={
+          isLoadingEmulators
+            ? "Carregando canais..."
+            : availableEmulators.length === 0
+              ? "Nenhum canal conectado"
+              : "Selecione um canal"
+        } />
+      </SelectTrigger>
+      <SelectContent>
+        {availableEmulators.length === 0 ? (
+          <div className="p-4 text-center text-muted-foreground">
+            <p className="text-sm">Nenhum canal conectado encontrado</p>
+            <p className="text-xs mt-1">
+              Verifique se há canais ativos na página de Canais
+            </p>
+          </div>
+        ) : (
+          availableEmulators.map((emulator) => (
+            <SelectItem key={emulator.id} value={emulator.id}>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="flex flex-col items-start">
+                  <span className="font-medium">{emulator.name}</span>
+                  <span className="text-xs text-muted-foreground">{emulator.phone}</span>
+                </div>
+              </div>
+            </SelectItem>
+          ))
+        )}
+      </SelectContent>
+    </Select>
+    {availableEmulators.length === 0 && !isLoadingEmulators && (
+      <p className="text-xs text-orange-600 flex items-center gap-1">
+        <MessageCircle className="w-3 h-3" />
+        Nenhum canal conectado. Configure um canal primeiro.
+      </p>
+    )}
+  </div>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="lead" className="text-sm font-semibold">
-                        Destinatário (Lead) *
-                      </Label>
-                      <Select
-                        value={formData.selectedLead}
-                        onValueChange={(value) => updateFormData({ selectedLead: value })}
-                        disabled={isLoadingLeads}
-                      >
-                        <SelectTrigger id="lead" className="h-11 w-full">
-                          <SelectValue placeholder={
-                            isLoadingLeads ? "Carregando leads..." : "Selecione um lead"
-                          } />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.isArray(leads) && leads.map((lead) => (
-                            <SelectItem key={lead.id} value={lead.id}>
-                              <div className="flex flex-col items-start">
-                                <span className="font-medium">{lead.name}</span>
-                                <span className="text-xs text-muted-foreground">{lead.phone}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+  {/* Tags */}
+  <div className="space-y-2">
+    <Label className="text-sm font-semibold">Tags da Campanha</Label>
+    <MultiSelectTags
+      options={tagsOptions}
+      selected={formData.tags}
+      onSelect={(tags) => updateFormData({ tags })}
+      placeholder={
+        isLoadingTags
+          ? "Carregando tags..."
+          : "Selecione as tags"
+      }
+      disabled={isLoadingTags}
+    />
+  </div>
+</div>
 
-                  {/* Tags */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold">Tags da Campanha</Label>
-                    <MultiSelectTags
-                      options={tagsOptions}
-                      selected={formData.tags}
-                      onSelect={(tags) => updateFormData({ tags })}
-                      placeholder={
-                        isLoadingTags
-                          ? "Carregando tags..."
-                          : "Selecione as tags da campanha"
-                      }
-                      disabled={isLoadingTags}
-                    />
-                  </div>
+  {/* Info do Canal Selecionado */}
+  {selectedEmulatorData && (
+    <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+      <div className="flex items-center gap-2 text-blue-800 mb-2">
+        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+        <span className="font-medium">Canal Ativo:</span>
+        <span className="text-blue-900 font-semibold">{selectedEmulatorData.name}</span>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div className="flex items-center gap-1 text-blue-600">
+          <MessageCircle className="w-3 h-3" />
+          <span>{selectedEmulatorData.phone}</span>
+        </div>
+        <div className="flex items-center gap-1 text-blue-600">
+          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+          <span>Conectado</span>
+        </div>
+        <div className="text-blue-500">
+          Criado em {format(new Date(selectedEmulatorData.createdAt), "dd/MM/yyyy", { locale: ptBR })}
+        </div>
+      </div>
+    </div>
+  )}
+</CardContent>
 
-                  {/* Info do Emulador Selecionado */}
-                  {selectedEmulatorData && (
-                    <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                      <div className="flex items-center gap-2 text-blue-800">
-                        <MessageCircle className="w-4 h-4" />
-                        <span className="font-medium">Emulador Selecionado:</span>
-                      </div>
-                      <p className="text-sm text-blue-600 mt-1">
-                        {selectedEmulatorData.name} ({selectedEmulatorData.phone})
-                      </p>
-                      <p className="text-xs text-blue-500 mt-1">
-                        Status: Conectado • Criado em {format(new Date(selectedEmulatorData.createdAt), "dd/MM/yyyy", { locale: ptBR })}
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
+
               </Card>
 
               {/* Conteúdo da Mensagem */}
@@ -525,13 +497,18 @@ export default function CampaignsPage() {
                     </div>
                   </RadioGroup>
 
-                  {/* Calendar Avançado para Agendamento */}
+                    {/* Calendar Avançado para Agendamento */}
                   {formData.sendOption === "agendar" && (
                     <div className="space-y-4">
                       <div className="text-sm font-medium text-gray-700 mb-4">
                         Selecione a data e horário para envio:
                       </div>
-                      <Calendar20 />
+                      <Calendar20 
+                        selectedDate={formData.scheduledDate}
+                        selectedTime={formData.scheduledTime}
+                        onDateSelect={(date) => updateFormData({ scheduledDate: date })}
+                        onTimeSelect={(time) => updateFormData({ scheduledTime: time })}
+                      />
                     </div>
                   )}
 
@@ -548,7 +525,7 @@ export default function CampaignsPage() {
                     ) : availableEmulators.length === 0 ? (
                       <>
                         <MessageCircle className="mr-2 h-5 w-5" />
-                        Configure um Emulador Primeiro
+                        Configure um Canal Primeiro
                       </>
                     ) : (
                       <>

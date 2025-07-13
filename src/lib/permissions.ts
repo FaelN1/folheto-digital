@@ -183,9 +183,21 @@ export const NAVIGATION_CONFIG: NavItem[] = [
   },
   {
     title: "Campanha",
-    url: "/intern/dashboard/campaign",
+    url: "/intern/dashboard/campaign/create",
     icon: "Megaphone",
     requiredPermissions: ['campaign.view'],
+    items: [
+      {
+        title: "Criar Campanha",
+        url: "/intern/dashboard/campaign/create",
+        requiredPermissions: ['campaign.create'],
+      },
+      {
+        title: "Lista de Campanhas",
+        url: "/intern/dashboard/campaign/campaign-list",
+        requiredPermissions: ['campaign.create'],
+      },
+    ],
   },
   {
     title: "Leads",
@@ -201,7 +213,7 @@ export const NAVIGATION_CONFIG: NavItem[] = [
   },
   {
     title: "Canais",
-    url: "/intern/dashboard/emulators",
+    url: "/intern/dashboard/channels",
     icon: "Share2",
     requiredPermissions: ['channels.view'],
   },

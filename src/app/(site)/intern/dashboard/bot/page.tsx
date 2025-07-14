@@ -101,9 +101,7 @@ export default function TypebotManagementPage() {
     setIsCreatingNew(false) // Reseta o estado de criação
   }
 
-  const handleToggleStatus = (id: string) => {
-    setTypebots((prev) => prev.map((bot) => (bot.id === id ? { ...bot, isActive: !bot.isActive } : bot)))
-  }
+ 
 
   const handleDeleteBot = (id: string) => {
     if (confirm("Tem certeza que deseja deletar este Typebot?")) {

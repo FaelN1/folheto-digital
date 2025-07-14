@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth/useAuth";
 import Link from "next/link"
 export function LoginForm() {
@@ -21,12 +20,12 @@ export function LoginForm() {
     setIsLoading(true);
 
    try {
-  console.log('[LoginForm] Enviando dados para login...');
   await login(email, password);
-  console.log('[LoginForm] Login OK');
-} catch (error: any) {
-  console.error('[LoginForm] Erro no login:', error);
-}
+    } catch {
+      // Erro já tratado no contexto
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

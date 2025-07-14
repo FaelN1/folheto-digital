@@ -57,7 +57,7 @@ export const emulatorKeys = {
  * ---------------------------------------------------------------------------
  */
 
-// GET /emulators/company/{companyId} - Obter emuladores por empresa
+// GET /emulators/company/{companyId} - Obter emuladores/canais por empresa
 const fetchEmulatorsByCompany = async (companyId: string): Promise<Emulator[]> => {
   const response = await api.get<Emulator[]>(`/emulators/company/${companyId}`);
   return response.data;
@@ -99,7 +99,7 @@ const deleteEmulator = async (id: string): Promise<void> => {
  */
 
 /**
- * useEmulatorsByCompany — Busca emuladores de uma empresa específica
+ * useEmulatorsByCompany — Busca emuladores/canais de uma empresa específica
  * @param companyId ID da empresa
  * @param options Opções do React Query
  */

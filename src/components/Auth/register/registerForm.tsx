@@ -12,7 +12,6 @@ export function RegisterForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [companyId, setCompanyId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const { register } = useAuth();
@@ -22,8 +21,8 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      await register(name, email, password, companyId);
-    } catch (error) {
+      await register(name, email, password);
+    } catch {
       // Erro já tratado no contexto
     } finally {
       setIsLoading(false);
@@ -79,7 +78,7 @@ export function RegisterForm() {
             </div>
           </div>
 
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="companyId" className="text-sm font-medium text-foreground">
            Empresa
             </Label>
@@ -95,7 +94,7 @@ export function RegisterForm() {
                 required
               />
             </div>
-          </div>
+          </div> */}
           
           <div className="space-y-2">
             <Label htmlFor="password" className="text-sm font-medium text-foreground">

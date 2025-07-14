@@ -72,21 +72,21 @@ export default function DashboardPage() {
                 className="min-w-0"
               />
               <MetricCard
-                title="Total de Emuladores"
+                title="Total de Canais"
                 value="100"
-                description="Emuladores registrados"
+                description="Canais registrados"
                 icon={<Wifi className="h-4 w-4 text-muted-foreground" />}
                 className="min-w-0"
               />
               <MetricCard
-                title="Emuladores Conectados"
+                title="Canais Conectados"
                 value="75"
                 description="75% do total"
                 icon={<Wifi className="h-4 w-4 text-green-500" />}
                 className="min-w-0"
               />
               <MetricCard
-                title="Emuladores Desconectados"
+                title="Canais Desconectados"
                 value="25"
                 description="25% do total"
                 icon={<Wifi className="h-4 w-4 text-red-500" />}

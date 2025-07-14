@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CalendarIcon, Filter, Search, Upload, Info, Tag, X, ChevronLeft, ChevronRight } from "lucide-react"
+import { CalendarIcon, Filter, Search, Upload, Tag, X, ChevronLeft, ChevronRight } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
@@ -23,8 +23,8 @@ import {
 } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { MultiSelectTags } from "@/components/ui/multi-select-tags"
-import { useLeadsByCompany, useLeadTags, type Lead, type CreateLeadParams } from "@/hooks/leads/useLeads"
-import { useTagsByCompany, type Tag as CompanyTag, type CreateTagParams } from "@/hooks/tags/useTags"
+import { useLeadsByCompany,  type Lead, type CreateLeadParams } from "@/hooks/leads/useLeads"
+import { useTagsByCompany, type Tag as CompanyTag } from "@/hooks/tags/useTags"
 import { toast } from "sonner"
 
 // Dados mockados
@@ -102,8 +102,7 @@ export default function LeadsPage() {
     isDeletingTag,
   } = useTagsByCompany(filtroCompany !== "Todas" ? filtroCompany : "")
 
-  // Hook para operações de tags em leads
-  const { assignTag, removeTag, isAssigningTag, isRemovingTag } = useLeadTags()
+
 
   // Dados dos leads com filtragem local se necessário
  const filteredLeads = React.useMemo(() => {
@@ -198,21 +197,7 @@ const handleAddTag = async () => {
     }
   }
 
-  const handleAssignTag = async (leadId: string, tagId: string) => {
-    try {
-      await assignTag({ leadId, tagId })
-    } catch (error) {
-      console.error("Erro ao atribuir tag:", error)
-    }
-  }
 
-  const handleRemoveTag = async (leadId: string, tagId: string) => {
-    try {
-      await removeTag({ leadId, tagId })
-    } catch (error) {
-      console.error("Erro ao remover tag:", error)
-    }
-  }
 
   const setSearchTerm = (value: string) => {
     setBusca(value)

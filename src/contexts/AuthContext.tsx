@@ -89,8 +89,26 @@ const login = async (email: string, password: string) => {
       router.push('/intern/dashboard');
     }
   } catch (error: any) {
-    console.error('Erro no login:', error);
-    const message = error.response?.data?.message || 'Erro ao fazer login';
+    let message = 'Erro ao fazer login';
+    if (error.response) {
+      if (error.response.status === 401) {
+        message = 'E-mail ou senha inválidos.';
+      } else if (error.response.status === 403) {
+        message = 'Acesso negado. Verifique suas permissões.';
+      } else if (error.response.status === 404) {
+        message = 'Usuário não encontrado.';
+      } else if (error.response.status === 429) {
+        message = 'Muitas tentativas. Tente novamente mais tarde.';
+      } else if (error.response.status === 500) {
+        message = 'Erro interno do servidor. Tente novamente mais tarde.';
+      } else {
+        message = error.response.data?.message || message;
+      }
+    } else if (error.request) {
+      message = 'Não foi possível conectar ao servidor. Verifique sua conexão.';
+    } else {
+      message = error.message || message;
+    }
     toast.error(message);
     throw new Error(message);
   }
@@ -104,7 +122,18 @@ const login = async (email: string, password: string) => {
       toast.success('Conta criada com sucesso! Faça login para continuar.');
       router.push('/auth/login');
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Erro ao registrar';
+      let message = 'Erro ao registrar';
+      if (error.response) {
+        if (error.response.status === 409) {
+          message = 'Já existe um usuário com este e-mail.';
+        } else if (error.response.status === 400) {
+          message = error.response.data?.message || 'Dados inválidos.';
+        } else if (error.response.status === 500) {
+          message = 'Erro interno do servidor. Tente novamente mais tarde.';
+        } else {
+          message = error.response.data?.message || message;
+        }
+      }
       toast.error(message);
       throw new Error(message);
     }

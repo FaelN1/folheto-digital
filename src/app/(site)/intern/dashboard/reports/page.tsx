@@ -1,19 +1,5 @@
 "use client"
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users, LayoutDashboard, TrendingUp } from "lucide-react"
+
 import { ChartBarMultiple } from "@/components/charts/BarChartReport"
 import {  ChartAreaLegendReport } from "@/components/charts/ChartAreaReport"
 

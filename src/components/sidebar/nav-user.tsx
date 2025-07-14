@@ -4,9 +4,9 @@ import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
-  CreditCard,
+
   LogOut,
-  Sparkles,
+
   User,
   Building,
   Shield,
@@ -34,7 +34,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/contexts/AuthContext"
-
+import Link from "next/link"
 interface User {
   id: string
   name: string
@@ -54,21 +54,31 @@ export function NavUser({ user }: NavUserProps) {
   if (!user) {
     return null
   }
-
-  // Function to get role display name and color
+//empresa por cor
   const getRoleInfo = (role?: string) => {
-    switch (role?.toLowerCase()) {
-      case 'admin':
-        return { label: 'Administrador', color: 'bg-red-100 text-red-800' }
-      case 'manager':
-        return { label: 'Gerente', color: 'bg-blue-100 text-blue-800' }
-      case 'user':
-        return { label: 'Usuário', color: 'bg-green-100 text-green-800' }
-      case 'operator':
-        return { label: 'Operador', color: 'bg-yellow-100 text-yellow-800' }
-      default:
-        return { label: role || 'Usuário', color: 'bg-gray-100 text-gray-800' }
+    const roleMap: Record<string, string> = {
+      'MASTER': 'Administrador Master',
+      'ADMIN': 'Administrador',
+      'USER': 'Usuário',
+      'GUEST': 'Convidado'
     }
+    const label = role ? roleMap[role.toUpperCase()] || role : 'Usuário'
+    let color = 'bg-gray-100 text-gray-800'
+    switch (role?.toUpperCase()) {
+      case 'MASTER':
+        color = 'bg-red-100 text-red-800'
+        break
+      case 'ADMIN':
+        color = 'bg-blue-100 text-blue-800'
+        break
+      case 'USER':
+        color = 'bg-green-100 text-green-800'
+        break
+      case 'GUEST':
+        color = 'bg-yellow-100 text-yellow-800'
+        break
+    }
+    return { label, color }
   }
 
   const roleInfo = getRoleInfo(user.role)
@@ -125,9 +135,9 @@ export function NavUser({ user }: NavUserProps) {
                 </div>
               </div>
             </DropdownMenuLabel>
-            
+
             <DropdownMenuSeparator />
-            
+
             {/* User Info Section */}
             <DropdownMenuGroup>
               <DropdownMenuItem className="flex flex-col items-start gap-2 p-3">
@@ -145,37 +155,37 @@ export function NavUser({ user }: NavUserProps) {
                 </div>
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            
+
             <DropdownMenuSeparator />
-            
+
             {/* <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Sparkles className="mr-2 h-4 w-4" />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup> */}
-            
+
             <DropdownMenuSeparator />
-            
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck className="mr-2 h-4 w-4" />
-                Account
-              </DropdownMenuItem>
-              {/* <DropdownMenuItem>
-                <CreditCard className="mr-2 h-4 w-4" />
-                Billing
-              </DropdownMenuItem> */}
-              <DropdownMenuItem>
-                <Bell className="mr-2 h-4 w-4" />
-                Notifications
+
+         <DropdownMenuGroup>
+                <DropdownMenuItem asChild>
+                <Link href="/intern/dashboard/settings" className="flex items-center w-full">
+                  <BadgeCheck className="h-4 w-4" />
+                  Account
+                </Link>
+                </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/intern/dashboard/settings?tab=notifications" className="flex items-center w-full">
+                  <Bell className="h-4 w-4" />
+                  Notifications
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            
+
             <DropdownMenuSeparator />
-            
+
             <DropdownMenuItem onClick={logout} className="text-red-600 focus:text-red-600">
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="h-4 w-4" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

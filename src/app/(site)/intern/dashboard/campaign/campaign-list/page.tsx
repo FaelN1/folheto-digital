@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import Link from "next/link"
 
 // Dados de exemplo das campanhas
 const campaigns = [
@@ -89,7 +90,9 @@ export default function CampaignsList() {
           <h1 className="text-3xl font-bold">Campanhas</h1>
           <p className="text-muted-foreground">Gerencie suas campanhas publicitárias</p>
         </div>
-        <Button>Nova Campanha</Button>
+        <Link
+         href="/intern/dashboard/campaign/create">
+        <Button>Nova Campanha</Button></Link>
       </div>
 
       {/* Filtros */}

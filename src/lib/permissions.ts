@@ -113,7 +113,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     'channels.delete',
 
     // Reports - Acesso total
-    'reports.view',
+    // 'reports.view',
     'reports.advanced',
 
     // Settings - Acesso total (exceto system)
@@ -144,7 +144,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     'channels.view',
 
     // Reports - Apenas relatórios básicos
-    'reports.view',
+    // 'reports.view',
 
     // Settings - Apenas visualização do perfil
     'settings.view',

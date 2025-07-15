@@ -37,6 +37,7 @@ export const usePermissions = () => {
     canConfigureBot: () => hasPermission(userRole, 'bot.configure'),
     canManageUsers: () => hasPermission(userRole, 'settings.users'),
     canViewAdvancedReports: () => hasPermission(userRole, 'reports.advanced'),
+    canViewReports: () => hasPermission(userRole, 'reports.view'),
     canAccessSystem: () => hasPermission(userRole, 'system.admin'),
     canViewSystemLogs: () => hasPermission(userRole, 'system.logs'),
     canManageDatabase: () => hasPermission(userRole, 'system.database'),

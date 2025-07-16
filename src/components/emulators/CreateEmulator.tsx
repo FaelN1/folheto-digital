@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,7 +7,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { toast } from "sonner"
 import { 
   useCreateEmulator,
-  type CreateEmulatorInput
+  type CreateEmulatorInput,
+  EmulatorStatus
 } from "@/hooks/emulators/useEmulators"
 
 interface CreateEmulatorModalProps {
@@ -29,7 +28,9 @@ export function CreateEmulatorModal({
 }: CreateEmulatorModalProps) {
   const [emulatorForm, setEmulatorForm] = React.useState<CreateEmulatorInput>({
     name: "",
-    phone: "",
+    serverIp: "",
+    emulatorId: "",
+    status: EmulatorStatus.OFFLINE,
     companyId: defaultCompanyId || ""
   })
 
@@ -38,7 +39,9 @@ export function CreateEmulatorModal({
     if (open) {
       setEmulatorForm({
         name: "",
-        phone: "",
+        serverIp: "",
+        emulatorId: "",
+        status: EmulatorStatus.OFFLINE,
         companyId: defaultCompanyId || ""
       })
     }
@@ -49,7 +52,13 @@ export function CreateEmulatorModal({
     onSuccess: (data) => {
       toast.success(`Emulador "${data.name}" criado com sucesso!`)
       onOpenChange(false)
-      setEmulatorForm({ name: "", phone: "", companyId: "" })
+      setEmulatorForm({ 
+        name: "", 
+        serverIp: "", 
+        emulatorId: "", 
+        status: EmulatorStatus.OFFLINE, 
+        companyId: defaultCompanyId || ""
+      })
       onSuccess?.()
     },
     onError: (error: any) => {
@@ -71,8 +80,13 @@ export function CreateEmulatorModal({
       return
     }
     
-    if (!emulatorForm.phone.trim()) {
-      toast.error("Telefone é obrigatório")
+    if (!emulatorForm.serverIp.trim()) {
+      toast.error("IP do servidor é obrigatório")
+      return
+    }
+
+    if (!emulatorForm.emulatorId.trim()) {
+      toast.error("ID do emulador é obrigatório")
       return
     }
     
@@ -81,34 +95,15 @@ export function CreateEmulatorModal({
       return
     }
 
-    // Validação de formato de telefone (básica)
-    const phoneDigits = emulatorForm.phone.replace(/\D/g, '')
-    if (phoneDigits.length < 10 || phoneDigits.length > 11) {
-      toast.error("Telefone deve ter entre 10 e 11 dígitos")
+    // Validação básica de IP
+    const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/
+    if (!ipRegex.test(emulatorForm.serverIp)) {
+      toast.error("IP do servidor deve ter formato válido (ex: 192.168.1.100)")
       return
     }
 
     console.log('Enviando dados para API:', emulatorForm)
     createEmulatorMutation.mutate(emulatorForm)
-  }
-
-  const formatPhoneInput = (value: string) => {
-    // Remove tudo que não é dígito
-    const digitsOnly = value.replace(/\D/g, '')
-    
-    // Aplica máscara (xx) xxxxx-xxxx
-    if (digitsOnly.length <= 2) {
-      return digitsOnly ? `(${digitsOnly}` : ''
-    } else if (digitsOnly.length <= 7) {
-      return `(${digitsOnly.slice(0, 2)}) ${digitsOnly.slice(2)}`
-    } else {
-      return `(${digitsOnly.slice(0, 2)}) ${digitsOnly.slice(2, 7)}-${digitsOnly.slice(7, 11)}`
-    }
-  }
-
-  const handlePhoneChange = (value: string) => {
-    const formatted = formatPhoneInput(value)
-    setEmulatorForm(prev => ({ ...prev, phone: formatted }))
   }
 
   return (
@@ -127,7 +122,7 @@ export function CreateEmulatorModal({
             <Input
               id="emulator-name"
               type="text"
-              placeholder="Ex: Emulador WhatsApp - Vendas"
+              placeholder="Ex: Emulador Principal - Vendas"
               value={emulatorForm.name}
               onChange={(e) => setEmulatorForm(prev => ({ ...prev, name: e.target.value }))}
               required
@@ -135,19 +130,52 @@ export function CreateEmulatorModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="emulator-phone">Telefone *</Label>
+            <Label htmlFor="emulator-server-ip">IP do Servidor *</Label>
             <Input
-              id="emulator-phone"
-              type="tel"
-              placeholder="(11) 99999-9999"
-              value={emulatorForm.phone}
-              onChange={(e) => handlePhoneChange(e.target.value)}
-              maxLength={15}
+              id="emulator-server-ip"
+              type="text"
+              placeholder="192.168.1.100"
+              value={emulatorForm.serverIp}
+              onChange={(e) => setEmulatorForm(prev => ({ ...prev, serverIp: e.target.value }))}
               required
             />
             <p className="text-xs text-muted-foreground">
-              Digite apenas números, a máscara será aplicada automaticamente
+              Endereço IP do servidor onde o emulador está rodando
             </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="emulator-id">ID do Emulador *</Label>
+            <Input
+              id="emulator-id"
+              type="text"
+              placeholder="EMU_001"
+              value={emulatorForm.emulatorId}
+              onChange={(e) => setEmulatorForm(prev => ({ ...prev, emulatorId: e.target.value }))}
+              required
+            />
+            <p className="text-xs text-muted-foreground">
+              Identificador único do emulador
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="emulator-status">Status Inicial *</Label>
+            <Select
+              value={emulatorForm.status}
+              onValueChange={(value: EmulatorStatus) => setEmulatorForm(prev => ({ ...prev, status: value }))}
+              required
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione o status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={EmulatorStatus.ONLINE}>Online</SelectItem>
+                <SelectItem value={EmulatorStatus.OFFLINE}>Offline</SelectItem>
+                <SelectItem value={EmulatorStatus.ERROR}>Erro</SelectItem>
+                <SelectItem value={EmulatorStatus.UNKNOWN}>Desconhecido</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

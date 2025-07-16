@@ -6,8 +6,9 @@ import { ptBR } from "date-fns/locale"
 interface Emulator {
   id: string
   name: string
-  phone: string
-  status: "CONNECTED" | "DISCONNECTED"
+  serverIp: string
+  emulatorId: string
+  status: "ONLINE" | "OFFLINE" | "ERROR" | "UNKNOWN"
   companyId: string
   createdAt: string
   updatedAt: string
@@ -19,8 +20,10 @@ interface MetricCardsProps {
 
 export function MetricCards({ emulators }: MetricCardsProps) {
   const totalEmulators = emulators.length
-  const connectedEmulators = emulators.filter((e) => e.status === "CONNECTED").length
-  const disconnectedEmulators = emulators.filter((e) => e.status === "DISCONNECTED").length
+  const onlineEmulators = emulators.filter((e) => e.status === "ONLINE").length
+  const offlineEmulators = emulators.filter((e) => e.status === "OFFLINE").length
+  const errorEmulators = emulators.filter((e) => e.status === "ERROR").length
+  const unknownEmulators = emulators.filter((e) => e.status === "UNKNOWN").length
 
   const latestUpdate = emulators.reduce((latest, emulator) => {
     const currentUpdate = new Date(emulator.updatedAt)
@@ -46,21 +49,21 @@ export function MetricCards({ emulators }: MetricCardsProps) {
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Canais Conectados</CardTitle>
+          <CardTitle className="text-sm font-medium">Canais Online</CardTitle>
           <Wifi className="h-4 w-4 text-green-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{connectedEmulators}</div>
+          <div className="text-2xl font-bold">{onlineEmulators}</div>
           <p className="text-xs text-muted-foreground">Atualmente online</p>
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Canais Desconectados</CardTitle>
+          <CardTitle className="text-sm font-medium">Canais Offline</CardTitle>
           <WifiOff className="h-4 w-4 text-red-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{disconnectedEmulators}</div>
+          <div className="text-2xl font-bold">{offlineEmulators}</div>
           <p className="text-xs text-muted-foreground">Atualmente offline</p>
         </CardContent>
       </Card>

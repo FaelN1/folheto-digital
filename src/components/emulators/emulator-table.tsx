@@ -18,8 +18,9 @@ import { EmulatorStatus } from "@/hooks/emulators/useEmulators"
 interface Emulator {
   id: string
   name: string
-  phone: string
-  status: "CONNECTED" | "DISCONNECTED"
+  serverIp: string
+  emulatorId: string
+  status: "ONLINE" | "OFFLINE" | "ERROR" | "UNKNOWN"
   companyId: string
   createdAt: string
   updatedAt: string
@@ -39,7 +40,8 @@ export function EmulatorTable({ emulators, onViewDetails, onEdit, onToggleStatus
         <TableHeader>
           <TableRow>
             <TableHead>Nome</TableHead>
-            <TableHead>Telefone</TableHead>
+            <TableHead>IP do Servidor</TableHead>
+            <TableHead>ID do Emulador</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Criado em</TableHead>
             <TableHead>Atualizado em</TableHead>
@@ -57,10 +59,19 @@ export function EmulatorTable({ emulators, onViewDetails, onEdit, onToggleStatus
             emulators.map((emulator) => (
               <TableRow key={emulator.id}>
                 <TableCell className="font-medium">{emulator.name}</TableCell>
-                <TableCell>{emulator.phone}</TableCell>
+                <TableCell>{emulator.serverIp}</TableCell>
+                <TableCell>{emulator.emulatorId}</TableCell>
                 <TableCell>
-                  <Badge variant={emulator.status === "CONNECTED" ? "default" : "destructive"}>
-                    {emulator.status === "CONNECTED" ? "Conectado" : "Desconectado"}
+                  <Badge 
+                    variant={
+                      emulator.status === "ONLINE" ? "default" : 
+                      emulator.status === "ERROR" ? "destructive" : 
+                      "secondary"
+                    }
+                  >
+                    {emulator.status === "ONLINE" ? "Online" :
+                     emulator.status === "OFFLINE" ? "Offline" :
+                     emulator.status === "ERROR" ? "Erro" : "Desconhecido"}
                   </Badge>
                 </TableCell>
                 <TableCell>{format(new Date(emulator.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}</TableCell>
@@ -86,7 +97,7 @@ export function EmulatorTable({ emulators, onViewDetails, onEdit, onToggleStatus
                           <Power className="mr-2 h-4 w-4" /> Mudar status
                         </div>
                         <Switch
-                          checked={emulator.status === "CONNECTED"}
+                          checked={emulator.status === "ONLINE"}
                           onCheckedChange={() => onToggleStatus(emulator.id, emulator.status as EmulatorStatus)}
                           aria-label={`Toggle status for ${emulator.name}`}
                         />

@@ -7,30 +7,39 @@ import api from "@/lib/axios";
  * 📑 Types & Interfaces
  * ---------------------------------------------------------------------------
  */
+
 export enum EmulatorStatus {
-  CONNECTED = "CONNECTED",
-  DISCONNECTED = "DISCONNECTED",
+  ONLINE = "ONLINE",
+  OFFLINE = "OFFLINE",
+  ERROR = "ERROR",
+  UNKNOWN = "UNKNOWN",
 }
+
 
 export interface Emulator {
   id: string;
   name: string;
-  phone: string;
+  serverIp: string;
+  emulatorId: string;
   status: EmulatorStatus;
   companyId: string;
-  createdAt: string; // ISODate
-  updatedAt: string; // ISODate
+  createdAt: string;
+  updatedAt: string;
 }
+
 
 export interface CreateEmulatorInput {
   name: string;
-  phone: string;
+  serverIp: string;
+  emulatorId: string;
+  status: EmulatorStatus;
   companyId: string;
 }
 
+
 export interface UpdateEmulatorInput {
   name?: string;
-  phone?: string;
+  serverIp?: string;
   status?: EmulatorStatus;
 }
 
@@ -57,10 +66,12 @@ export const emulatorKeys = {
  * ---------------------------------------------------------------------------
  */
 
-// GET /emulators/company/{companyId} - Obter emuladores/canais por empresa
+
+// GET /emulators?companyId= - Listar emuladores por empresa
 const fetchEmulatorsByCompany = async (companyId: string): Promise<Emulator[]> => {
-  const response = await api.get<Emulator[]>(`/emulators/company/${companyId}`);
-  return response.data;
+  console.log("Fetching emulators for company:", companyId);
+  const response = await api.get<{ emulators: Emulator[] }>(`/emulators/company/${companyId}`);
+  return response.data.emulators;
 };
 
 // GET /emulators/{id} - Obter emulador específico (se a rota existir)
@@ -81,15 +92,22 @@ const updateEmulator = async (id: string, data: UpdateEmulatorInput): Promise<Em
   return response.data;
 };
 
-// PATCH /emulators/{id}/status - Atualizar apenas status
+
+// PUT /emulators/{id} - Atualizar status (ou outros campos)
 const updateEmulatorStatus = async (id: string, data: UpdateEmulatorStatusInput): Promise<Emulator> => {
-  const response = await api.patch<Emulator>(`/emulators/${id}/status`, data);
+  const response = await api.put<Emulator>(`/emulators/${id}`, data);
   return response.data;
 };
 
 // DELETE /emulators/{id} - Deletar emulador
 const deleteEmulator = async (id: string): Promise<void> => {
   await api.delete(`/emulators/${id}`);
+};
+
+
+// POST /emulators/sync - Sincronizar emuladores
+const syncEmulators = async (data: any): Promise<any> => {
+  await api.post("/emulators/sync", data);
 };
 
 /**
@@ -270,6 +288,27 @@ export function useDeleteEmulator(options?: {
 }
 
 /**
+ * useRefreshEmulators — Mutation para refresh dos emuladores
+ * @param options Opções da mutation
+ */
+
+export function useSyncEmulators(options?: {
+  onSuccess?: () => void;
+  onError?: (error: AxiosError) => void;
+}) {
+  const queryClient = useQueryClient();
+
+  return useMutation<any, AxiosError, any>({
+    mutationFn: syncEmulators,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: emulatorKeys.all });
+      options?.onSuccess?.();
+    },
+    onError: options?.onError,
+  });
+}
+
+/**
  * ---------------------------------------------------------------------------
  * 🎯 Hooks de Conveniência
  * ---------------------------------------------------------------------------
@@ -292,11 +331,11 @@ export function useToggleEmulatorStatus(
     onError: (error) => options?.onError?.(error),
   });
 
+
   const toggle = () => {
-    const newStatus = emulator.status === EmulatorStatus.CONNECTED 
-      ? EmulatorStatus.DISCONNECTED 
-      : EmulatorStatus.CONNECTED;
-    
+    const newStatus = emulator.status === EmulatorStatus.ONLINE
+      ? EmulatorStatus.OFFLINE
+      : EmulatorStatus.ONLINE;
     updateStatus.mutate({ id: emulator.id, status: newStatus });
   };
 

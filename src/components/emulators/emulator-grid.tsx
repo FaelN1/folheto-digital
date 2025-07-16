@@ -9,16 +9,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Eye, Pencil, Power, Phone, User } from "lucide-react"
+import { MoreHorizontal, Eye, Pencil, Power, Globe, User } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { EmulatorStatus } from "@/hooks/emulators/useEmulators"
 
 interface Emulator {
   id: string
   name: string
-  phone: string
-  status: "CONNECTED" | "DISCONNECTED"
+  serverIp: string
+  emulatorId: string
+  status: "ONLINE" | "OFFLINE" | "ERROR" | "UNKNOWN"
   companyId: string
   createdAt: string
   updatedAt: string
@@ -28,7 +30,7 @@ interface EmulatorGridProps {
   emulators: Emulator[]
   onViewDetails: (id: string) => void
   onEdit: (id: string) => void
-  onToggleStatus: (id: string, currentStatus: "CONNECTED" | "DISCONNECTED") => void
+  onToggleStatus: (id: string, currentStatus: EmulatorStatus) => void
 }
 
 export function EmulatorGrid({ emulators, onViewDetails, onEdit, onToggleStatus }: EmulatorGridProps) {
@@ -47,15 +49,26 @@ export function EmulatorGrid({ emulators, onViewDetails, onEdit, onToggleStatus 
               <User className="h-5 w-5 text-primary" />
               {emulator.name}
             </CardTitle>
-            <Badge variant={emulator.status === "CONNECTED" ? "default" : "destructive"}>
-              {emulator.status === "CONNECTED" ? "Conectado" : "Desconectado"}
+            <Badge 
+              variant={
+                emulator.status === "ONLINE" ? "default" : 
+                emulator.status === "ERROR" ? "destructive" : 
+                "secondary"
+              }
+            >
+              {emulator.status === "ONLINE" ? "Online" :
+               emulator.status === "OFFLINE" ? "Offline" :
+               emulator.status === "ERROR" ? "Erro" : "Desconhecido"}
             </Badge>
           </CardHeader>
           <CardContent className="flex-1">
             <CardDescription className="flex items-center gap-2 text-sm">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              {emulator.phone}
+              <Globe className="h-4 w-4 text-muted-foreground" />
+              {emulator.serverIp}
             </CardDescription>
+            <p className="text-xs text-muted-foreground mt-1">
+              ID: {emulator.emulatorId}
+            </p>
             <p className="text-xs text-muted-foreground mt-2">
               Criado em: {format(new Date(emulator.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}
             </p>
@@ -84,8 +97,8 @@ export function EmulatorGrid({ emulators, onViewDetails, onEdit, onToggleStatus 
                     <Power className="mr-2 h-4 w-4" /> Mudar status
                   </div>
                   <Switch
-                    checked={emulator.status === "CONNECTED"}
-                    onCheckedChange={() => onToggleStatus(emulator.id, emulator.status)}
+                    checked={emulator.status === "ONLINE"}
+                    onCheckedChange={() => onToggleStatus(emulator.id, emulator.status as EmulatorStatus)}
                     aria-label={`Toggle status for ${emulator.name}`}
                   />
                 </DropdownMenuItem>

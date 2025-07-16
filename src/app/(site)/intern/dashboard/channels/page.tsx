@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Plus, Search, Table2, LayoutGrid } from "lucide-react"
+import { Plus, Search, Table2, LayoutGrid, RefreshCw, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -17,6 +17,7 @@ import { toast } from "sonner"
 import { 
   useEmulatorsByCompany,
   useUpdateEmulatorStatus,
+  useSyncEmulators,
   EmulatorStatus
 } from "@/hooks/emulators/useEmulators"
 import { useCompanyId } from "@/hooks/companies/useCompanies"
@@ -24,7 +25,7 @@ import PermissionGuard from "@/components/PermissionGuard"
 
 export default function ChannelsPage() {
   const [searchTerm, setSearchTerm] = React.useState("")
-  const [selectedStatus, setSelectedStatus] = React.useState<"ALL" | "CONNECTED" | "DISCONNECTED">("ALL")
+  const [selectedStatus, setSelectedStatus] = React.useState<"ALL" | "ONLINE" | "OFFLINE" | "ERROR" | "UNKNOWN">("ALL")
   const [viewMode, setViewMode] = React.useState<"table" | "grid">("table")
   const [dialogOpen, setDialogOpen] = React.useState(false)
   const [dialogContent, setDialogContent] = React.useState<{ title: string; description: string } | null>(null)
@@ -65,7 +66,8 @@ const emulators = React.useMemo(
       filtered = filtered.filter(
         (emulator) =>
           emulator.name.toLowerCase().includes(lowerCaseSearchTerm) ||
-          emulator.phone.toLowerCase().includes(lowerCaseSearchTerm) ||
+          emulator.serverIp.toLowerCase().includes(lowerCaseSearchTerm) ||
+          emulator.emulatorId.toLowerCase().includes(lowerCaseSearchTerm) ||
           emulator.id.toLowerCase().includes(lowerCaseSearchTerm),
       )
     }
@@ -82,7 +84,7 @@ const emulators = React.useMemo(
     if (emulator) {
       setDialogContent({
         title: `Detalhes do Emulador: ${emulator.name}`,
-        description: `ID: ${emulator.id}\nTelefone: ${emulator.phone}\nStatus: ${emulator.status}\nEmpresa: Minha Empresa\nCriado em: ${format(new Date(emulator.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}\nAtualizado em: ${format(new Date(emulator.updatedAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}`,
+        description: `ID: ${emulator.id}\nEmulatorId: ${emulator.emulatorId}\nIP: ${emulator.serverIp}\nStatus: ${emulator.status}\nEmpresa: Minha Empresa\nCriado em: ${format(new Date(emulator.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}\nAtualizado em: ${format(new Date(emulator.updatedAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}`,
       })
       setDialogOpen(true)
     }
@@ -106,13 +108,25 @@ const updateStatus = useUpdateEmulatorStatus({
   }
 })
 
+const syncEmulators = useSyncEmulators({
+  onSuccess: () => {
+    setTimeout(() => {
+      toast.success("Emuladores sincronizados com sucesso")
+      refetch()
+    }, 1000)
+  },
+  onError: (error) => {
+    toast.error(`Erro ao sincronizar emuladores: ${error.message}`)
+  }
+})
+
 const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
   const emulator = emulators.find(e => e.id === id)
   if (!emulator) return
 
-  const newStatus = currentStatus === EmulatorStatus.CONNECTED
-    ? EmulatorStatus.DISCONNECTED
-    : EmulatorStatus.CONNECTED
+  const newStatus = currentStatus === EmulatorStatus.ONLINE
+    ? EmulatorStatus.OFFLINE
+    : EmulatorStatus.ONLINE
 
   updateStatus.mutate({ id, status: newStatus })
 }
@@ -216,8 +230,27 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
         </div>
         <div className="flex items-center space-x-2">
           <PermissionGuard permissions="emulator.refresh">
-          <Button onClick={() => refetch()} variant="outline" size="sm">
-            Atualizar
+          <Button 
+            onClick={() => syncEmulators.mutate({ 
+              emulators: [], 
+              source: "manual", 
+              timestamp: Date.now() 
+            })} 
+            variant="outline" 
+            size="sm"
+            disabled={syncEmulators.isPending}
+          >
+            {syncEmulators.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Sincronizando...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Sincronizar
+              </>
+            )}
           </Button>
           </PermissionGuard>
           <PermissionGuard permissions="emulator.create">
@@ -238,7 +271,7 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
           <div className="relative w-full sm:max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar por nome, telefone ou ID..."
+              placeholder="            Buscar por nome, IP ou ID do emulador..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9 w-full"
@@ -248,15 +281,17 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
           {/* Status Filter */}
           <Select
             value={selectedStatus}
-            onValueChange={(value: "ALL" | "CONNECTED" | "DISCONNECTED") => setSelectedStatus(value)}
+            onValueChange={(value: "ALL" | "ONLINE" | "OFFLINE" | "ERROR" | "UNKNOWN") => setSelectedStatus(value)}
           >
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filtrar por Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ALL">Todos os Status</SelectItem>
-              <SelectItem value="CONNECTED">Conectado</SelectItem>
-              <SelectItem value="DISCONNECTED">Desconectado</SelectItem>
+              <SelectItem value="ONLINE">Online</SelectItem>
+              <SelectItem value="OFFLINE">Offline</SelectItem>
+              <SelectItem value="ERROR">Erro</SelectItem>
+              <SelectItem value="UNKNOWN">Desconhecido</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -336,13 +371,15 @@ const handleToggleStatus = (id: string, currentStatus: EmulatorStatus) => {
       )}
 
       {/* Modal para criar novo emulador */}
-      <CreateEmulatorModal
-        open={createEmulatorOpen}
-        onOpenChange={setCreateEmulatorOpen}
-        companies={[{ id: companyId, name: "Minha Empresa" }]}
-        defaultCompanyId={companyId}
-        onSuccess={handleCreateEmulatorSuccess}
-      />
+      {companyId && (
+        <CreateEmulatorModal
+          open={createEmulatorOpen}
+          onOpenChange={setCreateEmulatorOpen}
+          companies={[{ id: companyId, name: "Minha Empresa" }]}
+          defaultCompanyId={companyId}
+          onSuccess={handleCreateEmulatorSuccess}
+        />
+      )}
 
       {/* Diálogo para outras ações (placeholder) */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>

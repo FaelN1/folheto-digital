@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { PlusCircle, Pencil, Trash2 } from "lucide-react"
+import { PlusCircle, Code, Trash2 } from "lucide-react"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -115,6 +115,30 @@ export default function TypebotManagementPage() {
 
   return (
     <RouteGuard permissions="bot.view">
+       {/* Overlay cobrindo só o conteúdo principal */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 50,
+          background: "rgba(255,255,255,0.97)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div className="text-center space-y-4">
+          <h2 className="text-3xl font-bold text-blue-400 flex items-center justify-center gap-2">
+            <span><Code className="inline h-6 w-6 text-blue-400" /></span>
+            Em Desenvolvimento
+          </h2>
+          <p className="text-lg text-gray-700">
+            Esta tela está em construção.<br />
+            Em breve você poderá gerenciar seus Typebots aqui!
+          </p>
+        </div>
+      </div>
       <div className="flex h-full w-full bg-gray-50 min-h-[calc(100vh-200px)]">
         {/* Painel Esquerdo: Lista de Typebots */}
         <div className="w-1/3 border-r">
@@ -181,7 +205,7 @@ export default function TypebotManagementPage() {
                               }}
                               aria-label={`Editar ${typebot.name}`}
                             >
-                              <Pencil className="h-3 w-3" />
+                              <Code className="h-3 w-3" />
                             </Button>
                             <Button
                               variant="ghost"
